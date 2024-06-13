@@ -27,11 +27,19 @@
                     </div>
                 </li>
             </ol>
+            <div>
+                <DeleteFilesButton :delete-all="allSelected" :delete-ids="selectedIds"/>
+            </div>
         </nav>
         <div class="flex-1 overflow-auto">
+            <pre>{{ allSelected }}</pre>
+            <pre> {{ selected }}</pre>
             <table class="min-w-full">
                 <thead class="bg-gray-100 border-b">
                     <tr>
+                        <th class="text-sm font-medium text-gray-900 px-6 py-4 text-left w-[30px] max-w-[30px] pr-0">
+                            <Checkbox @change="onSelectAllChange" v-model:checked="allSelected"/>
+                        </th>
                         <th class="text-sm font-medium text-gray-900 px-6 py-4 text-left">
                             Name
                         </th>
@@ -52,7 +60,15 @@
                         :key="file.id"
                         class="bg-white border-b transition duration-300 ease-in-out hover:bg-gray-100 cursor-pointer"
                         @dblclick="openFolder(file)"
+                        @click="$event => toggleFileSelect(file) "
                     >
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 w-[30px] max-w-[30px] pr-0">
+                            <Checkbox 
+                                v-model="selected[file.id]" 
+                                :checked="selected[file.id] || allSelected"
+                                @change="$event => onSelectCheckboxChange(file)"
+                            />
+                        </td>
                         <td
                             class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 flex items-center"
                         >
@@ -95,7 +111,9 @@ import { router, Link } from '@inertiajs/vue3';
 import { computed, onMounted, onUpdated, ref } from "vue";
 import { HomeIcon, ChevronRightIcon } from '@heroicons/vue/20/solid'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import Checkbox from "@/Components/Checkbox.vue";
 import FileIcon from "@/Components/app/FileIcon.vue";
+import DeleteFilesButton from "@/Components/app/DeleteFilesButton.vue";
 import { httpGet } from "@/Helper/http-helper.js";
 
 
@@ -118,8 +136,12 @@ const allFiles = ref({
     next: props.files.links.next
 })
 
+const allSelected = ref(false);
+const selected = ref({});
+
 
 // Computed
+const selectedIds = computed(() => Object.entries(selected.value).filter(a => a[1]).map(a => a[0]))
 
 
 // Methods
@@ -143,6 +165,33 @@ function loadMore() {
         allFiles.value.data = [...allFiles.value.data, ...res.data]
         allFiles.value.next = res.links.next
     })
+}
+
+function onSelectAllChange() {
+    allFiles.value.data.forEach(f => {
+        selected.value[f.id] = allSelected.value
+    })
+}
+
+function toggleFileSelect(file) {
+    selected.value[file.id] = !selected.value[file.id]
+    onSelectCheckboxChange(file)
+}
+
+function onSelectCheckboxChange(file) {
+    if (!selected.value[file.id]) {
+        allSelected.value = false;
+    } else {
+        let checked = true;
+
+        for (let file of allFiles.value.data) {
+            if (!selected.value[file.id]) {
+                checked = false;
+                break;
+            }
+        }
+        allSelected.value = checked
+    }
 }
 
 
