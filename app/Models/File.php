@@ -7,8 +7,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use App\Traits\HasCreatorAndUpdater;
 use Kalnoy\Nestedset\NodeTrait;
 
@@ -65,10 +66,10 @@ class File extends Model
             $model->path = (!$model->parent->isRoot() ? $model->parent->path . '/' : '') . Str::slug($model->name);
         });
 
-        static::deleted(function (File $model) {
-            if (!$model->is_folder) {
-                Storage::delete($model->storage_path);
-            }
-        });
+        // static::deleted(function (File $model) {
+        //     if (!$model->is_folder) {
+        //         Storage::delete($model->storage_path);
+        //     }
+        // });
     }
 }

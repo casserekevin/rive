@@ -10,13 +10,22 @@
         Delete
     </button>
 
+    <ConfirmationDialog :show="showDeleteDialog"
+                        message="Are you sure you want to delete selected files?"
+                        @cancel="onDeleteCancel"
+                        @confirm="onDeleteConfirm">
+
+    </ConfirmationDialog>
+
 </template>
 
 <script setup>
 // Imports
-import {ref} from "vue";
-import {useForm, usePage} from "@inertiajs/vue3";
-// import {showErrorDialog, showSuccessNotification} from "@/event-bus.js";
+import { ref } from "vue";
+import { useForm, usePage } from "@inertiajs/vue3";
+import { showErrorDialog } from "@/event-bus.js";
+import ConfirmationDialog from "@/Components/ConfirmationDialog.vue";
+// showSuccessNotification
 
 // Uses
 const page = usePage();
@@ -28,7 +37,6 @@ const deleteFilesForm = useForm({
 
 
 // Refs
-
 const showDeleteDialog = ref(false)
 
 // Props & Emit
@@ -52,11 +60,32 @@ const emit = defineEmits(['delete'])
 
 function onDeleteClick() {
     if (!props.deleteAll && !props.deleteIds.length) {
-        // showErrorDialog('Please select at least one file to delete')
-        console.log('error');
+        showErrorDialog('Please select at least one file to delete')
         return
     }
     showDeleteDialog.value = true;
+}
+
+function onDeleteCancel(){
+    showDeleteDialog.value = false;
+}
+
+function onDeleteConfirm(){
+    deleteFilesForm.parent_id = page.props.folder.id
+    if (props.deleteAll) {
+        deleteFilesForm.all = true
+    } else {
+        deleteFilesForm.ids = props.deleteIds
+    }
+
+    deleteFilesForm.delete(route('file.delete'), {
+        onSuccess: () => {
+            showDeleteDialog.value = false
+            emit('delete')
+            // showSuccessNotification('Selected files have been deleted')
+        }
+    })
+    console.log("Delete", props.deleteAll, props.deleteIds);
 }
 
 // Hooks

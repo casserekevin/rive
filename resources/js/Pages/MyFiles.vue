@@ -28,12 +28,10 @@
                 </li>
             </ol>
             <div>
-                <DeleteFilesButton :delete-all="allSelected" :delete-ids="selectedIds"/>
+                <DeleteFilesButton :delete-all="allSelected" :delete-ids="selectedIds" @delete="onDelete"/>
             </div>
         </nav>
         <div class="flex-1 overflow-auto">
-            <pre>{{ allSelected }}</pre>
-            <pre> {{ selected }}</pre>
             <table class="min-w-full">
                 <thead class="bg-gray-100 border-b">
                     <tr>
@@ -192,6 +190,11 @@ function onSelectCheckboxChange(file) {
         }
         allSelected.value = checked
     }
+}
+
+function onDelete() {
+    allSelected.value = false
+    selected.value = {}
 }
 
 
