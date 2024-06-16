@@ -109,12 +109,12 @@
 import { router, Link } from '@inertiajs/vue3';
 import { computed, onMounted, onUpdated, ref } from "vue";
 import { HomeIcon, ChevronRightIcon } from '@heroicons/vue/20/solid'
+import { httpGet } from "@/Helper/http-helper.js";
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Checkbox from "@/Components/Checkbox.vue";
 import FileIcon from "@/Components/app/FileIcon.vue";
 import DeleteFilesButton from "@/Components/app/DeleteFilesButton.vue";
 import DownloadFilesButton from "@/Components/app/DownloadFilesButton.vue";
-import { httpGet } from "@/Helper/http-helper.js";
 
 
 // Uses

@@ -46,6 +46,20 @@ class FileController extends Controller
         return Inertia::render('MyFiles', compact('files', 'folder', 'ancestors'));
     }
 
+    public function trash(Request $request) {
+        
+        $files = File::onlyTrashed()
+            ->where('created_by', Auth::id())
+            ->orderBy('is_folder', 'desc')
+            ->orderBy('deleted_at', 'desc')
+            ->orderBy('files.id', 'desc')
+            ->paginate(14);
+
+        $files = FileResource::collection($files);
+        
+        return Inertia::render('Trash', compact('files'));
+    }
+
     public function createFolder(StoreFolderRequest $request) {
         $data = $request->validated();
         $parent = $request->parent;
@@ -129,7 +143,7 @@ class FileController extends Controller
             $children = $parent->children;
 
             foreach ($children as $child) {
-                $child->delete();
+                $child->moveToTrash();
             }
         } else {
             foreach ($data['ids'] ?? [] as $id) {
@@ -142,7 +156,7 @@ class FileController extends Controller
                     //         $child->delete();
                     //     }
                     // }
-                    $file->delete();
+                    $file->moveToTrash();
                 }
             }
         }

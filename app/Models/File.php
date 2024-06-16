@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use App\Traits\HasCreatorAndUpdater;
 use Kalnoy\Nestedset\NodeTrait;
+use Carbon\Carbon;
 
 
 class File extends Model
@@ -71,5 +72,12 @@ class File extends Model
         //         Storage::delete($model->storage_path);
         //     }
         // });
+    }
+
+    public function moveToTrash()
+    {
+        $this->deleted_at = Carbon::now();
+
+        return $this->save();
     }
 }
