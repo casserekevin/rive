@@ -23,9 +23,9 @@
 // Imports
 import { ref } from "vue";
 import { useForm, usePage } from "@inertiajs/vue3";
-import { showErrorDialog } from "@/event-bus.js";
+import { showErrorDialog, showSuccessNotification } from "@/event-bus.js";
 import ConfirmationDialog from "@/Components/ConfirmationDialog.vue";
-// showSuccessNotification
+
 
 // Uses
 const page = usePage();
@@ -82,7 +82,7 @@ function onDeleteConfirm(){
         onSuccess: () => {
             showDeleteDialog.value = false
             emit('delete')
-            // showSuccessNotification('Selected files have been deleted')
+            showSuccessNotification('Selected files have been deleted')
         }
     })
     console.log("Delete", props.deleteAll, props.deleteIds);
