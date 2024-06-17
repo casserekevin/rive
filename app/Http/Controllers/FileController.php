@@ -11,6 +11,7 @@ use App\Models\File;
 use App\Http\Requests\StoreFolderRequest;
 use App\Http\Requests\StoreFileRequest;
 use App\Http\Requests\FilesActionRequest;
+use App\Http\Requests\TrashFilesRequest;
 use App\Http\Resources\FileResource;
 
 class FileController extends Controller
@@ -251,6 +252,25 @@ class FileController extends Controller
                 $zip->addFile($localPath, $ancestors . $file->name);
             }
         }
+    }
+
+    public function restore(TrashFilesRequest $request)
+    {
+        $data = $request->validated();
+        if ($data['all']) {
+            $children = File::onlyTrashed()->get();
+            foreach ($children as $child) {
+                $child->restore();
+            }
+        } else {
+            $ids = $data['ids'] ?? [];
+            $children = File::onlyTrashed()->whereIn('id', $ids)->get();
+            foreach ($children as $child) {
+                $child->restore();
+            }
+        }
+
+        return to_route('trash');
     }
 }
 
