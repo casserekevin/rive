@@ -8,11 +8,14 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use App\Models\File;
+use App\Models\StarredFile;
 use App\Http\Requests\StoreFolderRequest;
 use App\Http\Requests\StoreFileRequest;
 use App\Http\Requests\FilesActionRequest;
 use App\Http\Requests\TrashFilesRequest;
+use App\Http\Requests\AddToFavouritesRequest;
 use App\Http\Resources\FileResource;
+use Carbon\Carbon;
 
 class FileController extends Controller
 {
@@ -33,6 +36,7 @@ class FileController extends Controller
             ->where('created_by', Auth::id())
             ->orderBy('is_folder', 'desc')
             ->orderBy('created_at', 'desc')
+            ->orderBy('id', 'desc')
             ->paginate(14);
 
         $files = FileResource::collection($files); 
@@ -303,11 +307,10 @@ class FileController extends Controller
 
         $id = $data['id'];
         $file = File::find($id);
-        $user_id = Auth::id();
 
         $starredFile = StarredFile::query()
             ->where('file_id', $file->id)
-            ->where('user_id', $user_id)
+            ->where('user_id', Auth::id())
             ->first();
 
         if ($starredFile) {
@@ -315,7 +318,7 @@ class FileController extends Controller
         } else {
             StarredFile::create([
                 'file_id' => $file->id,
-                'user_id' => $user_id,
+                'user_id' => Auth::id(),
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ]);

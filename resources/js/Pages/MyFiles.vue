@@ -72,7 +72,7 @@
                             />
                         </td>
                         <td class="px-6 py-4 max-w-[40px] text-sm font-medium text-gray-900 text-yellow-500">
-                            <div @click.stop.prevent="console.log('favorite')">
+                            <div @click.stop.prevent="addRemoveFavourite(file)">
                                 <svg v-if="!file.is_favourite" xmlns="http://www.w3.org/2000/svg" fill="none"
                                     viewBox="0 0 24 24" stroke-width="1.5"
                                     stroke="currentColor" class="w-6 h-6">
@@ -128,7 +128,8 @@
 import { router, Link } from '@inertiajs/vue3';
 import { computed, onMounted, onUpdated, ref } from "vue";
 import { HomeIcon, ChevronRightIcon } from '@heroicons/vue/20/solid'
-import { httpGet } from "@/Helper/http-helper.js";
+import { httpGet, httpPost } from "@/Helper/http-helper.js";
+import { showSuccessNotification} from "@/event-bus.js";
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Checkbox from "@/Components/Checkbox.vue";
 import FileIcon from "@/Components/app/FileIcon.vue";
@@ -216,6 +217,17 @@ function onSelectCheckboxChange(file) {
 function onDelete() {
     allSelected.value = false
     selected.value = {}
+}
+
+function addRemoveFavourite(file) {
+    httpPost(route('file.addToFavourites'), {id: file.id})
+        .then(() => {
+            file.is_favourite = !file.is_favourite
+            showSuccessNotification('Selected files have been added to favourites')
+        })
+        .catch((er) => {
+            console.log(er);
+        })
 }
 
 
