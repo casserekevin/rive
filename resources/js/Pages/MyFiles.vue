@@ -27,7 +27,11 @@
                     </div>
                 </li>
             </ol>
-            <div>
+            <div class="flex">
+                <label class="flex items-center mr-3">
+                    Only Favourites
+                    <Checkbox @change="showOnlyFavourites"  v-model:checked="onlyFavourites" class="ml-2"/>
+                </label>
                 <DownloadFilesButton :all="allSelected" :ids="selectedIds" class="mr-2"/>
                 <DeleteFilesButton :delete-all="allSelected" :delete-ids="selectedIds" @delete="onDelete"/>
             </div>
@@ -159,6 +163,10 @@ const allFiles = ref({
 const allSelected = ref(false);
 const selected = ref({});
 
+const onlyFavourites = ref(false);
+
+let params = null;
+
 
 // Computed
 const selectedIds = computed(() => Object.entries(selected.value).filter(a => a[1]).map(a => a[0]))
@@ -221,13 +229,22 @@ function onDelete() {
 
 function addRemoveFavourite(file) {
     httpPost(route('file.addToFavourites'), {id: file.id})
-        .then(() => {
-            file.is_favourite = !file.is_favourite
-            showSuccessNotification('Selected files have been added to favourites')
-        })
-        .catch((er) => {
-            console.log(er);
-        })
+    .then(() => {
+        file.is_favourite = !file.is_favourite
+        showSuccessNotification('File have been added to favourites')
+    })
+    .catch((er) => {
+        console.log(er);
+    })
+}
+
+function showOnlyFavourites() {
+    if (onlyFavourites.value) {
+        params.set('favourites', 1)
+    } else {
+        params.delete('favourites')
+    }
+    router.get(window.location.pathname+'?'+params.toString())
 }
 
 
@@ -240,6 +257,9 @@ onUpdated(() => {
 })
 
 onMounted(() => { 
+    params = new URLSearchParams(window.location.search)
+    onlyFavourites.value = params.get('favourites') === '1'
+
     const observer = new IntersectionObserver((entries) => entries.forEach(entry => entry.isIntersecting && loadMore()), {
         rootMargin: '-250px 0px 0px 0px'
     })
