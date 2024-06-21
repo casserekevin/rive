@@ -32,6 +32,7 @@
                     Only Favourites
                     <Checkbox @change="showOnlyFavourites"  v-model:checked="onlyFavourites" class="ml-2"/>
                 </label>
+                <ShareFilesButton :all-selected="allSelected" :selected-ids="selectedIds" />
                 <DownloadFilesButton :all="allSelected" :ids="selectedIds" class="mr-2"/>
                 <DeleteFilesButton :delete-all="allSelected" :delete-ids="selectedIds" @delete="onDelete"/>
             </div>
@@ -139,6 +140,7 @@ import Checkbox from "@/Components/Checkbox.vue";
 import FileIcon from "@/Components/app/FileIcon.vue";
 import DeleteFilesButton from "@/Components/app/DeleteFilesButton.vue";
 import DownloadFilesButton from "@/Components/app/DownloadFilesButton.vue";
+import ShareFilesButton from "@/Components/app/ShareFilesButton.vue";
 
 
 // Uses
