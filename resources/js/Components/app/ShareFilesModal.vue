@@ -1,5 +1,5 @@
 <template>
-    <modal :show="props.modelValue" @show="onShow" max-width="sm">
+    <modal :show="modelValue" @show="onShow" max-width="sm">
         <div class="p-6">
             <h2 class="text-lg font-medium text-gray-900">
                 Share Files
@@ -34,7 +34,7 @@
 <script setup>
 // Imports
 import {useForm, usePage} from "@inertiajs/vue3";
-import {nextTick, ref} from "vue";
+import {nextTick, ref, toRefs} from "vue";
 
 import {showSuccessNotification} from "@/event-bus.js";
 
@@ -66,6 +66,9 @@ const props = defineProps({
     allSelected: Boolean,
     selectedIds: Array
 })
+
+const {modelValue} = toRefs(props)
+
 const emit = defineEmits(['update:modelValue'])
 
 

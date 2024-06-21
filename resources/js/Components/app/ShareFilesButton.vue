@@ -15,8 +15,8 @@
 <script setup>
 // Imports
 import {ref} from "vue";
-import ConfirmationDialog from "@/Components/ConfirmationDialog.vue";
-import {showErrorDialog, showSuccessNotification} from "@/event-bus.js";
+import { showErrorDialog } from "@/event-bus.js";
+
 import ShareFilesModal from "@/Components/app/ShareFilesModal.vue";
 
 // Uses
