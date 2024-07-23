@@ -396,6 +396,42 @@ class FileController extends Controller
 
         return redirect()->back();
     }
+
+    public function sharedWithMe(Request $request) {
+        
+        $files = File::query()
+            ->join('file_shares', 'file_shares.file_id', 'files.id')
+            ->where('file_shares.user_id', Auth::id())
+            ->orderBy('file_shares.created_at', 'desc')
+            ->orderBy('files.id', 'desc')
+            ->paginate(14);
+
+        $files = FileResource::collection($files);
+
+        if ($request->wantsJson()) {
+            return $files;
+        }
+        
+        return Inertia::render('SharedWithMe', compact('files'));
+    }
+
+    public function sharedByMe(Request $request) {
+        
+        $files = File::query()
+            ->join('file_shares', 'file_shares.file_id', 'files.id')
+            ->where('files.created_by', Auth::id())
+            ->orderBy('file_shares.created_at', 'desc')
+            ->orderBy('files.id', 'desc')
+            ->paginate(14);
+
+        $files = FileResource::collection($files);
+
+        if ($request->wantsJson()) {
+            return $files;
+        }
+        
+        return Inertia::render('SharedByMe', compact('files'));
+    }
 }
 
 
