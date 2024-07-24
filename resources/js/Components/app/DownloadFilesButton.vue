@@ -34,6 +34,8 @@ const props = defineProps({
         type: Array,
         required: false
     },
+    sharedWithMe: false,
+    sharedByMe: false,
 })
 
 
@@ -60,6 +62,11 @@ function download() {
     }
 
     let url = route('file.download');
+    if (props.sharedWithMe) {
+        url = route('file.downloadSharedWithMe')
+    } else if (props.sharedByMe) {
+        url = route('file.downloadSharedByMe')
+    }
 
     httpGet(url + '?' + p.toString())
     .then(res => {

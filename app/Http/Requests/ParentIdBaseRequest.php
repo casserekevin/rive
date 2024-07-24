@@ -4,9 +4,9 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
-use App\Models\File;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\Auth;
+use App\Models\File;
 
 class ParentIdBaseRequest extends FormRequest
 {

@@ -2,8 +2,7 @@
     <AuthenticatedLayout>
         <nav class="flex items-center justify-end p-1 mb-3">
             <div>
-                <!-- <DeleteForeverButton :all-selected="allSelected" :selected-ids="selectedIds" @delete="resetForm" />
-                <RestoreFilesButton :all-selected="allSelected" :selected-ids="selectedIds" @restore="resetForm"/> -->
+                <DownloadFilesButton :all="allSelected" :ids="selectedIds" class="mr-2" :shared-by-me="true"/>
             </div>
         </nav>
         <div class="flex-1 overflow-auto">
@@ -58,6 +57,7 @@ import {httpGet} from "@/Helper/http-helper.js";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import Checkbox from "@/Components/Checkbox.vue";
 import FileIcon from "@/Components/app/FileIcon.vue";
+import DownloadFilesButton from "@/Components/app/DownloadFilesButton.vue";
 import RestoreFilesButton from "@/Components/app/RestoreFilesButton.vue";
 import DeleteForeverButton from "@/Components/app/DeleteForeverButton.vue";
 
