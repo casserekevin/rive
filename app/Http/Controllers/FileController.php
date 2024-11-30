@@ -480,7 +480,7 @@ class FileController extends Controller
             $files = File::query()->whereIn('id', $ids)->get();
             $url = $this->createZip($files);
 
-            $filename = $parent->name . '.zip';
+            $filename = $zipName . '.zip';
         }
 
         return [$url, $filename];
