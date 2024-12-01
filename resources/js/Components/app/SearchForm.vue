@@ -3,8 +3,9 @@
         <TextInput
             type="text"
             class="block w-full mr-2"
-            v-model="form.search"
+            v-model="search"
             autocomplete
+            @keyup.enter.prevent="onSearch"
             placeholder="Search for files and folders"
         />
     </div>
@@ -13,16 +14,17 @@
 
 <script setup>
 // Imports
+import { router } from '@inertiajs/vue3';
 import TextInput from '@/Components/TextInput.vue';
-import { useForm } from '@inertiajs/vue3';
+
+import { ref } from "vue";
 
 
 // Uses
-const form = useForm({
-    search: ''
-})
+
 
 // Refs
+const search = ref('')
 
 
 // Props & Emit
@@ -32,6 +34,11 @@ const form = useForm({
 
 
 // Methods
+function onSearch() {
+    const params = new URLSearchParams(window.location.search)
+    params.set('search', search.value)
+    router.get(window.location.pathname + '?' + params.toString())
+}
 
 
 // Hooks
