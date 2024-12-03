@@ -17,10 +17,11 @@
 import { router } from '@inertiajs/vue3';
 import TextInput from '@/Components/TextInput.vue';
 
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 
 
 // Uses
+let params = ''
 
 
 // Refs
@@ -35,13 +36,16 @@ const search = ref('')
 
 // Methods
 function onSearch() {
-    const params = new URLSearchParams(window.location.search)
     params.set('search', search.value)
     router.get(window.location.pathname + '?' + params.toString())
 }
 
 
 // Hooks
+onMounted(() => {
+    params = new URLSearchParams(window.location.search)
+    search.value = params.get('search')
+})
 
 
 </script>
