@@ -26,6 +26,9 @@ use Carbon\Carbon;
 class FileController extends Controller
 {
     public function myFiles(Request $request, string $folder = null) {
+
+        $search = $request->get('search');
+
         if($folder) {
             $folder = File::query()
                 ->where('created_by', Auth::id())
@@ -41,12 +44,18 @@ class FileController extends Controller
         $query = File::query()
             ->select('files.*')
             ->with('starred')
-            ->where('parent_id', $folder->id)
             ->where('created_by', Auth::id())
+            ->where('_lft', '!=', 1)
             ->orderBy('is_folder', 'desc')
             ->orderBy('files.created_at', 'desc')
             ->orderBy('files.id', 'desc');
 
+
+        if ($search) {
+            $query->where('name', 'like', "%$search%");
+        } else {
+            $query->where('parent_id', $folder->id);
+        }
 
         if ($favourites === 1) {
             $query->join('starred_files', 'starred_files.file_id', '=', 'files.id')
