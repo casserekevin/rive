@@ -18,6 +18,7 @@ import { router } from '@inertiajs/vue3';
 import TextInput from '@/Components/TextInput.vue';
 
 import { onMounted, ref } from "vue";
+import { emitter, ON_SEARCH } from '@/event-bus';
 
 
 // Uses
@@ -38,6 +39,8 @@ const search = ref('')
 function onSearch() {
     params.set('search', search.value)
     router.get(window.location.pathname + '?' + params.toString())
+
+    emitter.emit(ON_SEARCH, search.value)
 }
 
 

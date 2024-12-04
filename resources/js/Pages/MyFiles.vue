@@ -50,6 +50,11 @@
                         <th class="text-sm font-medium text-gray-900 px-6 py-4 text-left">
                             Name
                         </th>
+                        <th v-if="search"
+                            class="text-sm font-medium text-gray-900 px-6 py-4 text-left"
+                        >
+                            Path
+                        </th>
                         <th class="text-sm font-medium text-gray-900 px-6 py-4 text-left">
                             Owner
                         </th>
@@ -98,6 +103,11 @@
                             <FileIcon :file="file"/>
                             {{ file.name }}
                         </td>
+                        <td v-if="search"
+                            class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"
+                        >
+                            {{ file.path }}
+                        </td>
                         <td
                             class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"
                         >
@@ -134,13 +144,14 @@ import { router, Link } from '@inertiajs/vue3';
 import { computed, onMounted, onUpdated, ref } from "vue";
 import { HomeIcon, ChevronRightIcon } from '@heroicons/vue/20/solid'
 import { httpGet, httpPost } from "@/Helper/http-helper.js";
-import { showSuccessNotification} from "@/event-bus.js";
+import { showSuccessNotification, emitter, ON_SEARCH } from "@/event-bus.js";
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Checkbox from "@/Components/Checkbox.vue";
 import FileIcon from "@/Components/app/FileIcon.vue";
 import DeleteFilesButton from "@/Components/app/DeleteFilesButton.vue";
 import DownloadFilesButton from "@/Components/app/DownloadFilesButton.vue";
 import ShareFilesButton from "@/Components/app/ShareFilesButton.vue";
+
 
 
 // Uses
@@ -169,6 +180,8 @@ const onlyFavourites = ref(false);
 
 let params = null;
 
+let search = ref('');
+
 
 // Computed
 const selectedIds = computed(() => Object.entries(selected.value).filter(a => a[1]).map(a => a[0]))
@@ -184,9 +197,6 @@ function openFolder(file) {
 }
 
 function loadMore() {
-    console.log("load more");
-    console.log(allFiles.value.next)
-
     if (allFiles.value.next === null) {
         return
     }
@@ -261,6 +271,11 @@ onUpdated(() => {
 onMounted(() => { 
     params = new URLSearchParams(window.location.search)
     onlyFavourites.value = params.get('favourites') === '1'
+
+    search.value = params.get('search')
+    emitter.on(ON_SEARCH, (value) => {
+        search.value = value
+    })
 
     const observer = new IntersectionObserver((entries) => entries.forEach(entry => entry.isIntersecting && loadMore()), {
         rootMargin: '-250px 0px 0px 0px'
